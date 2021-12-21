@@ -29,8 +29,17 @@ async function handleRequest(event) {
   // Parse request URL to get access to query string
   let url = new URL(request.url)
 
+  // Need to add image type to key for cache
+  const accept = request.headers.get("Accept");
+  let imageKey = ""
+  if (/image\/avif/.test(accept)) {
+    imageKey = 'avif';
+  } else if (/image\/webp/.test(accept)) {
+    imageKey = 'webp';
+  }
+
   // Construct the cache key from the cache URL
-  const cacheKey = new Request(url.toString(), request)
+  const cacheKey = new Request(url.toString() + imageKey, request)
   const cache = caches.default
   let response = await cache.match(cacheKey)
   if (!response) {
@@ -47,7 +56,7 @@ async function handleRequest(event) {
     if (url.searchParams.has("quality")) options.cf.image.quality = url.searchParams.get("quality")
 
     // Your Worker is responsible for automatic format negotiation. Check the Accept header.
-    const accept = request.headers.get("Accept");
+
     if (/image\/avif/.test(accept)) {
       options.cf.image.format = 'avif';
     } else if (/image\/webp/.test(accept)) {
