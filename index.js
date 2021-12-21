@@ -84,9 +84,11 @@ async function handleRequest(event) {
     }
 
     // Build a request that passes through request headers to get original image
-    request.headers.append("Cache-Control", "max-age=2592000")
+    let newHeaders = request.headers
+
+    newHeaders.append("Cache-Control", "max-age=2592000")
     const imageRequest = new Request(imageURL, {
-      headers: request.headers
+      headers: newHeaders
     })
     console.log(`NOT IN CACHE FOR ${key}`)
     event.waitUntil(postLog(`${url.toString()} not in cache`))
