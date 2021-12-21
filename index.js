@@ -39,7 +39,8 @@ async function handleRequest(event) {
   }
 
   // Construct the cache key from the cache URL
-  const cacheKey = new Request(url.toString() + imageKey, request)
+  const key = url.toString() + imageKey
+  const cacheKey = new Request(key, request)
   const cache = caches.default
   let response = await cache.match(cacheKey)
   if (!response) {
@@ -88,7 +89,7 @@ async function handleRequest(event) {
     const imageRequest = new Request(imageURL, {
       headers: request.headers
     })
-    console.log(`NOT IN CACHE FOR ${cacheKey}`)
+    console.log(`NOT IN CACHE FOR ${key}`)
     event.waitUntil(postLog(`${url.toString()} not in cache`))
     // Returning fetch() with resizing options will pass through response with the resized image.
     response = await fetch(imageRequest, options)
@@ -110,10 +111,10 @@ async function handleRequest(event) {
     // Store the fetched response as cacheKey
     // Use waitUntil so you can return the response without blocking on
     // writing to cache
-    console.log(`Writing to Cache for ${cacheKey}`)
+    console.log(`Writing to Cache for ${key}`)
     event.waitUntil(cache.put(cacheKey, response.clone()))
   } else {
-    console.log(`FOUND IN CACHE FOR ${cacheKey}`)
+    console.log(`FOUND IN CACHE FOR ${key}`)
     event.waitUntil(postLog(`${url.toString()} FOUND in cache`))
     let headers = ""
     response.headers.forEach((value, key) => {
