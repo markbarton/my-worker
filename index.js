@@ -39,12 +39,11 @@ async function handleRequest(event) {
   }
 
   // Construct the cache key from the cache URL
-  const key = url.toString() + imageKey
+  const key = `${url.toString()}&imagetype=${imageKey}`
   const cacheKey = new Request(key, request)
   const cache = caches.default
   let response = await cache.match(cacheKey)
   if (!response) {
-
 
     // Cloudflare-specific options are in the cf object.
     let options = { cf: { image: {} } }
@@ -80,12 +79,12 @@ async function handleRequest(event) {
         return new Response('Disallowed file extension', { status: 400 })
       }
 
-
     } catch (err) {
       return new Response('Invalid "image" value', { status: 400 })
     }
 
     // Build a request that passes through request headers to get original image
+    request.headers.append("Cache-Control", "max-age=2592000")
     const imageRequest = new Request(imageURL, {
       headers: request.headers
     })
