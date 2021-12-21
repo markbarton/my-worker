@@ -1,0 +1,13 @@
+name = "my-worker"
+type = "javascript"
+
+account_id = "9f7f6b300ccefd2eb7e016181e86d3b1"
+workers_dev = true
+route = ""
+zone_id = ""
+compatibility_date = "2021-12-17"
+
+[env.production]
+workers_dev = false
+route = "https://worker.hostedimages.co.uk/*"
+zone_id = "da27ca49fe88bbdd72cd9c18c200751f"
